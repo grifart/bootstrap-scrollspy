@@ -72,7 +72,8 @@ const ScrollSpy = (($) => {
   class ScrollSpy {
     constructor(element, config) {
       this._element       = element
-      this._scrollElement = element.tagName === 'BODY' ? window : element
+      this._scrollableAreaOwnerDocument = element.ownerDocument
+      this._scrollElement = element.tagName === 'BODY' ? this._scrollableAreaOwnerDocument.defaultView : element; // @todo: this does not work as expected when tag name is not body, should be fixed
       this._config        = this._getConfig(config)
       this._selector      = `${this._config.target} ${Selector.NAV_LINKS},` +
           `${this._config.target} ${Selector.LIST_ITEMS},` +
@@ -80,6 +81,7 @@ const ScrollSpy = (($) => {
       this._offsets       = []
       this._targets       = []
       this._activeTarget  = null
+      this._targetOwnerDocument = document; // This would not work when target is inside of iframe, but we are OK with that as that is not our case.
       this._scrollHeight  = 0
 
       $(this._scrollElement).on(Event.SCROLL, (event) => this._process(event))
@@ -115,15 +117,15 @@ const ScrollSpy = (($) => {
 
       this._scrollHeight = this._getScrollHeight()
 
-      const targets = [].slice.call(document.querySelectorAll(this._selector))
+      const targets = [].slice.call(this._targetOwnerDocument.querySelectorAll(this._selector))
 
       targets
           .map((element) => {
             let target
-            const targetSelector = Util.getSelectorFromElement(element)
+            const targetSelector = Util.getSelectorFromElement(element, this._scrollableAreaOwnerDocument)
 
             if (targetSelector) {
-              target = document.querySelector(targetSelector)
+              target = this._scrollableAreaOwnerDocument.querySelector(targetSelector)
             }
 
             if (target) {
@@ -183,20 +185,28 @@ const ScrollSpy = (($) => {
     }
 
     _getScrollTop() {
-      return this._scrollElement === window
-          ? this._scrollElement.pageYOffset : this._scrollElement.scrollTop
+      return this._scrollElement === this._targetOwnerDocument.defaultView
+          ? this._scrollElement.pageYOffset : (
+              this._scrollElement.scrollTop !== undefined
+                  ? this._scrollElement.scrollTop
+                  : this._scrollElement.document.documentElement.scrollTop
+          )
     }
 
     _getScrollHeight() {
       return this._scrollElement.scrollHeight || Math.max(
-          document.body.scrollHeight,
-          document.documentElement.scrollHeight
+          this._scrollableAreaOwnerDocument.body.scrollHeight,
+          this._scrollableAreaOwnerDocument.documentElement.scrollHeight
       )
     }
 
     _getOffsetHeight() {
-      return this._scrollElement === window
-          ? window.innerHeight : this._scrollElement.getBoundingClientRect().height
+      return this._scrollElement === this._targetOwnerDocument.defaultView
+          ? this._scrollableAreaOwnerDocument.defaultView.innerHeight : (
+              typeof this._scrollElement.getBoundingClientRect === 'function'
+                  ? this._scrollElement.getBoundingClientRect().height
+                  : this._scrollElement.document.documentElement.clientHeight
+          )
     }
 
     _process() {
@@ -250,7 +260,7 @@ const ScrollSpy = (($) => {
             `${selector}[href="${target}"]`
       })
 
-      const $link = $([].slice.call(document.querySelectorAll(queries.join(','))))
+      const $link = $([].slice.call(this._targetOwnerDocument.querySelectorAll(queries.join(','))))
 
       if ($link.hasClass(ClassName.DROPDOWN_ITEM)) {
         $link.closest(Selector.DROPDOWN).find(Selector.DROPDOWN_TOGGLE).addClass(ClassName.ACTIVE)
@@ -271,7 +281,7 @@ const ScrollSpy = (($) => {
     }
 
     _clear() {
-      const nodes = [].slice.call(document.querySelectorAll(this._selector))
+      const nodes = [].slice.call(this._targetOwnerDocument.querySelectorAll(this._selector))
       $(nodes).filter(Selector.ACTIVE).removeClass(ClassName.ACTIVE)
     }
 

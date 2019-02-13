@@ -1,0 +1,18 @@
+{
+  "name": "grifart-bootstrap-scrollspy",
+  "version": "1.0.0",
+  "description": "Custom scrollspy plugin based on bootstrap scrollspy",
+  "main": "./dist/scrollspy.js",
+  "repository": "git@github.com:grifart/bootstrap-scrollspy.git",
+  "author": "Bara Najmanova <bara.najmanova@grifart.cz>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
+    "@babel/preset-env": "^7.3.1"
+  },
+  "scripts": {
+    "build": "babel src/scrollspy.js -o dist/scrollspy.js && babel src/util.js -o dist/util.js"
+  }
+}
