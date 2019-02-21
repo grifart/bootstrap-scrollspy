@@ -189,7 +189,7 @@ const ScrollSpy = (($) => {
           ? this._scrollElement.pageYOffset : (
               this._scrollElement.scrollTop !== undefined
                   ? this._scrollElement.scrollTop
-                  : this._scrollElement.document.documentElement.scrollTop
+                  : this._scrollElement.document.documentElement.scrollTop || this._scrollElement.scrollY
           )
     }
 

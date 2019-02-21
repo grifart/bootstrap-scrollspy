@@ -192,7 +192,7 @@ var ScrollSpy = function ($) {
     }, {
       key: "_getScrollTop",
       value: function _getScrollTop() {
-        return this._scrollElement === this._targetOwnerDocument.defaultView ? this._scrollElement.pageYOffset : this._scrollElement.scrollTop !== undefined ? this._scrollElement.scrollTop : this._scrollElement.document.documentElement.scrollTop;
+        return this._scrollElement === this._targetOwnerDocument.defaultView ? this._scrollElement.pageYOffset : this._scrollElement.scrollTop !== undefined ? this._scrollElement.scrollTop : this._scrollElement.document.documentElement.scrollTop || this._scrollElement.scrollY;
       }
     }, {
       key: "_getScrollHeight",
