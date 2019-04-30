@@ -1,21 +1,48 @@
 # grifart-bootstrap-scrollspy
 
-Toto repo vzniklo na základě potřeby poupravit originální bootstrap scrollspy. Scrollspy jsme potřebovali upravit tak, aby nezávisel na globálním kontextu a byl funkční například i v Tinymce editoru.
+Originální bootstrap scrollspy nepodporuje situaci, kdy scrollovaný obsah je v iframe (například obsah TinyMCE). Scrollspy tedy bylo třeba upravit.
 
-## Vývoj
+Tento repozitář obsahuje dvě větve hlavní větve:
 
-Momentálně jsou zde dvě větve `master` a `original-bootstrap-scrollspy`.
+- `original-bootstrap-scrollspy` - obsahuje původní neupravenou verzi scrollspy z [Bootstrap](https://getbootstrap.com)
+- `master` - upravená verze podporující iframes
 
-`Original-bootstrap-scrollspy` obsahuje původní zdrojové soubory pluginu scrollspy. 
+Repozitář zároveň obsahuje i zkompilované JavaScript soubory, které je třeba verzovat spolu s zdrojovým kódem. (díky tomu nemusíme nastavovat publikační proces balíku přes CI) Proto je třeba před commitem nezapomenout spustit `yarn build` (doporučuji nastavit jako `pre-commit-hook`).
 
-`Master` slouží pro vlastní vývoj custom scrollspy.
 
-Před vývojem je potřeba spustit příkaz `yarn install`. Poté upravit kód v `src` složce. Potom spustit příkaz `yarn build`. Tím se vytvoří vybuilděný script, který je uveden jako `main` v `package.json`. Není konvencí spouštět nad `node-modules` v projektu `babel-loader`, protože je pomalý. Proto se build souborů řeší zde a ne až v projektu a v projektu se využívají vybuilděné soubory. 
+## Instalace
 
-## Upgrading originálního bootstrap-scrollspy
+Tento balíček zatím není v systému [npm](https://www.npmjs.com), proto je třeba přidat tento veřejný repozitář přímo do `package.json`.
 
-Pomocí větve `original-bootstrap-scrollspy`. Bootstrap vydá novou verzi, člověk díky téhle větvi se může podívat, co se změnilo v pluginu scrollspy a upravit, co je potřeba a změny promítnout i do našeho custom scrollspy.
+Tento balíček používá [sémantické verzování 2.0](https://semver.org/spec/v2.0.0.html), je tedy možné používat `^` v version constaints.
 
-## Použití v projektu
+```bash
+yarn add git://github.com/grifart/bootstrap-scrollspy.git#^1.0.0
+```
 
-V `package.json` v projektu přidáme tento balíček přes `yarn add git://github.com/grifart/bootstrap-scrollspy.git#master`. V případě změny masteru tohoto balíčku, je pak potřeba v projektu, ve kterém je tento balíček využíván, spustit příkaz `yarn upgrade grifart-bootstrap-scrollspy`.
+Upgrade balíčku provádíme standardně, jaké každý jiný balíček přes `yarn upgrade`, či změnu constrain v `package.json`.
+
+
+## Upgrade podkladové verze bootstrap-scrollspy
+
+Ve větvi `original-bootstrap-scrollspy` přepíšeme soubory aktuálními. Poté již stačí se přepnout na master a udělat
+
+```bash
+git checkout original-bootstrap-scrollspy
+```
+
+Zde upravte soubory na aktuální bootstrap.
+
+```bash
+git add .
+git commit -m "updated to bootstrap v. X.Y.Z"
+git push
+```
+
+A teď je chvíle pro sloučení změn:
+
+```bash
+git checkout master
+git merge --no-ff original-bootstrap-scrollspy
+git push
+```
