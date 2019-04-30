@@ -20,7 +20,7 @@ Tento balíček používá [sémantické verzování 2.0](https://semver.org/spe
 yarn add git://github.com/grifart/bootstrap-scrollspy.git#^1.0.0
 ```
 
-Upgrade balíčku provádíme standardně, jaké každý jiný balíček přes `yarn upgrade`, či změnu constrain v `package.json`.
+Upgrade balíčku provádíme standardně, jako každý jiný balíček přes `yarn upgrade`, či změnu constrain v `package.json`.
 
 
 ## Upgrade podkladové verze bootstrap-scrollspy
